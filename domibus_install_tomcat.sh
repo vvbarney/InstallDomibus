@@ -18,6 +18,11 @@
 # MySQL:
 # https://ec.europa.eu/digital-building-blocks/artifact/repository/eDelivery/eu/domibus/domibus-msh-sql-distribution/1.16/
 # - domibus-msh-sql-distribution-1.16.zip
+#
+# MySQL JDBC driver:
+# https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-j-9.6.0.zip
+# https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-j_9.6.0-1ubuntu24.04_all.deb
+
 
 ZIP_DOMIBUS_URL="https://ec.europa.eu/digital-building-blocks/artifact/repository/eDelivery/eu/domibus/domibus-msh-distribution/5.1.9"
 
@@ -34,6 +39,11 @@ ZIP_FILES+=("domibus-msh-distribution-5.1.9-sample-configuration-and-testing.zip
 ZIP_FILES+=("domibus-msh-distribution-5.1.9-default-jms-plugin.zip")
 ZIP_FILES+=("domibus-msh-distribution-5.1.9-default-ws-plugin.zip")
 ZIP_FILES+=("domibus-msh-distribution-5.1.9-default-fs-plugin.zip")
+
+ZIP_JDBC_URL="https://dev.mysql.com/get/Downloads/Connector-J"
+ZIP_JDBC_NAME="mysql-connector-j-9.6.0.zip"
+JDBC_NAME="mysql-connector-j-9.6.0"
+
 
 
 # FUNCTION:  zkontroluj či result je 'N'. Ak ano ukonči
@@ -73,6 +83,13 @@ VerifyResult $result
 
 DOMIBUS_FULL=${SCRIPT_DIR}/"domibus-msh-distribution-5.1.9-tomcat-full.zip"
 unzip -q ${DOMIBUS_FULL} "${DOMIBUS_NAME}/*" -d ${INSTALL_DIR}
+
+# ---------------------------------------
+echo "Download ... ${ZIP_JDBC_NAME}"
+wget -q -N ${ZIP_JDBC_URL}/${ZIP_JDBC_NAME} -P ${SCRIPT_DIR}
+
+echo "Add MySQL JDBS driver ... ${ZIP_JDBC_NAME}"
+unzip -j -q ${SCRIPT_DIR}/${ZIP_JDBC_NAME} "${JDBC_NAME}/${JDBC_NAME}.jar" -d ${DOMIBUS_DIR}/lib
 
 # ---------------------------------------
 # read -n 1 -p "Vytvoriť MySQL databázu DOMIBUS? [Y/n] " result

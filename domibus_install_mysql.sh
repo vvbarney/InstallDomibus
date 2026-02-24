@@ -24,7 +24,7 @@ wget -q -N ${ZIP_SQL_URL}/${ZIP_SQL_NAME} -P ${SCRIPT_DIR}
 DB_EXISTS=$(mysql -h ${DB_SERVER} -u root -sN -e "SELECT COUNT(*) FROM information_schema.schemata WHERE schema_name = '${DB_NAME}'")
 if [[ $DB_EXISTS == 1 ]]; then
 	echo "Databáza DB.${DB_NAME} uz existuje"
-	#exit 1
+	exit 1
 else
 	echo "Vytvorenie databázy DB.${DB_NAME}"
 
