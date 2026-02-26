@@ -1,0 +1,61 @@
+#
+# Set image version domibus (5.1.9)
+# - domibus-mysql8:5.1.9
+# - domibus-tomcat9:5.1.9
+#
+# Docker compose project used to startup the test environment.
+#
+# Usage:
+#     Init:     docker compose create
+#     Start:    docker-compose up -d
+#     Shutdown: docker-compose down
+#     Logs:     docker-compose logs
+#
+# Configuration:
+#   This file represents the architecture of the Domibus single node setup with MySQL
+
+version: '3.2'
+services:
+  #
+  # Domibus Tomcat MySQL Configuration
+  #
+  # Optional: can provide your own external database
+  mysql:
+    image: code.europa.eu:4567/edelivery/docker/domibus-mysql8:5.1.9
+    environment:
+      - MYSQL_ROOT_PASSWORD=ii
+      - MYSQL_DATABASE=domibus
+      - MYSQL_USER=edelivery
+      - MYSQL_PASSWORD=edelivery
+    security_opt:
+      - seccomp:unconfined
+    volumes:
+      - volume_mysql:/var/lib/mysql
+    ports:
+      - "13306:3306"
+
+  tomcati1:
+    image: code.europa.eu:4567/edelivery/docker/domibus-tomcat9:5.1.9
+    environment:
+      - DB_TYPE=MySQL
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=edelivery
+      - DB_PASS=edelivery
+      - LOGGER_LEVEL_ORG_APACHE_CXF=INFO
+      - CHECK_DEFAULT_PASSWD=false
+      - domibus.metrics.sl4j.reporter.enable=false
+      - domibus.metrics.monitor.jms.queues=false
+      - domibus.metrics.monitor.memory=false
+      - domibus.metrics.monitor.gc=false
+      - domibus.metrics.monitor.cached.threads=false
+    ports:
+      - "18080:8080"
+    volumes:
+      - volume_domibus:/data/tomcat/conf/domibus
+    depends_on:
+      - mysql
+
+volumes:
+  volume_mysql:
+  volume_domibus:
